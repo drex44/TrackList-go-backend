@@ -1,11 +1,12 @@
 package main
 
 import (
-	"net/http"
-	"github.com/labstack/echo"
-	. "checklist/models"
-	. "checklist/dao"
 	. "checklist/configs"
+	. "checklist/dao"
+	. "checklist/models"
+	"net/http"
+
+	"github.com/labstack/echo"
 )
 
 var mongoConfig = MongoConfig{}
@@ -22,17 +23,26 @@ func init() {
 
 func main() {
 	e := echo.New()
-	
+
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
-	
-	e.POST("/createCList", createCList)
-	e.GET("/updateCList", updateCList)
-	e.GET("/addItemToCList", addItemToCList)
-	e.GET("/getAll", getAll)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	// CList API
+	e.POST("/createCList", createCList)
+	e.POST("/getAllCList", getAllCList)
+	e.POST("/getCListById", getCListById)
+	e.POST("/deleteCList", deleteCList)
+	e.POST("/updateCList", updateCList)
+
+	// Items API
+	e.POST("/getItemsByCList", notImplemented)
+	e.POST("/getItemById", notImplemented)
+	e.POST("/addItem", notImplemented)
+	e.POST("/removeItem", notImplemented)
+	e.POST("/updateItem", notImplemented)
+
+	e.Logger.Fatal(e.Start(":4000"))
 }
 
 func createCList(c echo.Context) error {
@@ -40,24 +50,54 @@ func createCList(c echo.Context) error {
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	if err:=dao.Insert(*u); err!=nil{
+	if err := dao.Insert(*u); err != nil {
 		return err
 	}
 	return c.JSON(http.StatusCreated, u)
 }
 
-func getAll(c echo.Context) error {
-	var lists, err=dao.FindAll()
+func deleteCList(c echo.Context) error {
+	u := new(CList)
+	if err := c.Bind(u); err != nil {
+		return err
+	}
+	if err := dao.Delete(*u); err != nil {
+		return err
+	}
+	return c.JSON(http.StatusCreated, u)
+}
+
+func getCListById(c echo.Context) error {
+	u := new(CList)
+	if err := c.Bind(u); err != nil {
+		return err
+	}
+	list, err := dao.FindById(*u)
 	if err != nil {
 		return err
 	}
-  	return c.JSON(http.StatusOK, lists)
+	return c.JSON(http.StatusCreated, list)
+}
+
+func getAllCList(c echo.Context) error {
+	var lists, err = dao.FindAll()
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, lists)
 }
 
 func updateCList(c echo.Context) error {
-  	return c.String(http.StatusOK, "Hello, World!")
+	u := new(CList)
+	if err := c.Bind(u); err != nil {
+		return err
+	}
+	if err := dao.Update(*u); err != nil {
+		return err
+	}
+	return c.JSON(http.StatusCreated, u)
 }
 
-func addItemToCList(c echo.Context) error {
+func notImplemented(c echo.Context) error {
 	return c.String(http.StatusOK, "Hello, World!")
 }

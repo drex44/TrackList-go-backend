@@ -1,9 +1,10 @@
 package dao
 
 import (
-	"log"
-	"fmt"
 	. "checklist/models"
+	"fmt"
+	"log"
+
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -33,10 +34,10 @@ func (m *ListDAO) FindAll() ([]CList, error) {
 	return clists, err
 }
 
-func (m *ListDAO) FindById(id string) (CList, error) {
-	var clist CList
-	err := db.C(COLLECTION).FindId(bson.ObjectIdHex(id)).One(&clist)
-	return clist, err
+func (m *ListDAO) FindById(clist CList) (CList, error) {
+	var resCList CList
+	err := db.C(COLLECTION).FindId(clist.ID).One(&resCList)
+	return resCList, err
 }
 
 func (m *ListDAO) Insert(clist CList) error {
@@ -48,7 +49,9 @@ func (m *ListDAO) Insert(clist CList) error {
 }
 
 func (m *ListDAO) Delete(clist CList) error {
-	err := db.C(COLLECTION).Remove(&clist)
+	fmt.Println(clist)
+	err := db.C(COLLECTION).RemoveId(clist.ID)
+	fmt.Println(err)
 	return err
 }
 
