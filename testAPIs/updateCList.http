@@ -1,0 +1,14 @@
+POST http://localhost:4000/updateCList HTTP/1.1
+content-type: application/json
+
+{
+    "id":"5b1b6addb2aef325ef27da5b",
+	"title":"Finance 101",
+	"description":"checklist to check your financial status",
+	"tags": ["finance", "howto", "beginner"],
+	"category":"finance",
+	"owner": 1,
+	"contributors": ["3","4"],
+	"location": "india",
+	"items":[{"title":"step 1", "description":"test 1" , "order": 2, "status" : false}, {"title":"", "description":"test 2" , "order": 1, "status" : true}]
+}
