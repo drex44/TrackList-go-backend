@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 var mongoConfig = MongoConfig{}
@@ -24,6 +25,13 @@ func init() {
 func main() {
 	e := echo.New()
 
+	// CORS middleware
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"https://labstack.com", "http://localhost:3000"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+	// CORS middleware
+
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
@@ -35,12 +43,12 @@ func main() {
 	e.POST("/deleteCList", deleteCList)
 	e.POST("/updateCList", updateCList)
 
-	// Items API
-	e.POST("/getItemsByCList", notImplemented)
-	e.POST("/getItemById", notImplemented)
-	e.POST("/addItem", notImplemented)
-	e.POST("/removeItem", notImplemented)
-	e.POST("/updateItem", notImplemented)
+	// Tasks API
+	e.POST("/getTasksByCList", notImplemented)
+	e.POST("/getTaskById", notImplemented)
+	e.POST("/addTask", notImplemented)
+	e.POST("/removeTask", notImplemented)
+	e.POST("/updateTask", notImplemented)
 
 	e.Logger.Fatal(e.Start(":4000"))
 }

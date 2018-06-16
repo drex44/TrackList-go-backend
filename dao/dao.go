@@ -42,6 +42,9 @@ func (m *ListDAO) FindById(clist CList) (CList, error) {
 
 func (m *ListDAO) Insert(clist CList) error {
 	clist.ID = bson.NewObjectId()
+	for index := 0; index < len(clist.Tasks); index++ {
+		clist.Tasks[index].ID = bson.NewObjectId()
+	}
 	fmt.Println(clist)
 	err := db.C(COLLECTION).Insert(&clist)
 	fmt.Println(err)

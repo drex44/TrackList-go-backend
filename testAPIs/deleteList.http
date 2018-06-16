@@ -2,5 +2,5 @@ POST http://localhost:4000/deleteCList HTTP/1.1
 content-type: application/json
 
 {
-    "id" : "5b1b63ceb2aef35fe50494e0"
+    "id" : "5b24f753b2aef328a2a8f89d"
 }
