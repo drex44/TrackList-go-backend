@@ -2,7 +2,6 @@ package dao
 
 import (
 	. "checklist/models"
-	"fmt"
 	"log"
 
 	mgo "gopkg.in/mgo.v2"
@@ -40,21 +39,18 @@ func (m *ListDAO) FindById(clist CList) (CList, error) {
 	return resCList, err
 }
 
-func (m *ListDAO) Insert(clist CList) error {
-	clist.ID = bson.NewObjectId()
+func (m *ListDAO) Insert(clist CList) (bson.ObjectId, error) {
+	var listId = bson.NewObjectId()
+	clist.ID = listId
 	for index := 0; index < len(clist.Tasks); index++ {
 		clist.Tasks[index].ID = bson.NewObjectId()
 	}
-	fmt.Println(clist)
 	err := db.C(COLLECTION).Insert(&clist)
-	fmt.Println(err)
-	return err
+	return listId, err
 }
 
 func (m *ListDAO) Delete(clist CList) error {
-	fmt.Println(clist)
 	err := db.C(COLLECTION).RemoveId(clist.ID)
-	fmt.Println(err)
 	return err
 }
 

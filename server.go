@@ -58,10 +58,11 @@ func createCList(c echo.Context) error {
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	if err := dao.Insert(*u); err != nil {
+	listId, err := dao.Insert(*u)
+	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusCreated, u)
+	return c.JSON(http.StatusCreated, listId)
 }
 
 func deleteCList(c echo.Context) error {
