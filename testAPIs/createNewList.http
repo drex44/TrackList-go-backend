@@ -2,7 +2,7 @@ POST http://localhost:4000/createCList HTTP/1.1
 content-type: application/json
 
 {
-	"title":"Finance 101",
+	"title":"Finance 102",
 	"description":"checklist to check your financial status",
 	"tags": ["finance", "howto", "beginner"],
 	"category":"finance",
@@ -11,5 +11,5 @@ content-type: application/json
 	"location": "india",
 	"tasks":[
 		{"title":"step 1", "description":"test 1" , "order": 2, "status" : false}, 
-		{"title":"", "description":"test 2" , "order": 1, "status" : false}]
+		{"title":"step 2", "description":"test 2" , "order": 1, "status" : true}]
 }
