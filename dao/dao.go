@@ -55,6 +55,13 @@ func (m *ListDAO) Delete(clist CList) error {
 }
 
 func (m *ListDAO) Update(clist CList) error {
+
+	for index := 0; index < len(clist.Tasks); index++ {
+		if clist.Tasks[index].ID == "" {
+			clist.Tasks[index].ID = bson.NewObjectId()
+		}
+	}
+
 	err := db.C(COLLECTION).UpdateId(clist.ID, &clist)
 	return err
 }
