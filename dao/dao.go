@@ -39,14 +39,14 @@ func (m *ListDAO) FindById(clist CList) (CList, error) {
 	return resCList, err
 }
 
-func (m *ListDAO) Insert(clist CList) (bson.ObjectId, error) {
+func (m *ListDAO) Insert(clist CList) (CList, error) {
 	var listId = bson.NewObjectId()
 	clist.ID = listId
 	for index := 0; index < len(clist.Tasks); index++ {
 		clist.Tasks[index].ID = bson.NewObjectId()
 	}
 	err := db.C(COLLECTION).Insert(&clist)
-	return listId, err
+	return clist, err
 }
 
 func (m *ListDAO) Delete(clist CList) error {
@@ -54,7 +54,7 @@ func (m *ListDAO) Delete(clist CList) error {
 	return err
 }
 
-func (m *ListDAO) Update(clist CList) error {
+func (m *ListDAO) Update(clist CList) (CList, error) {
 
 	for index := 0; index < len(clist.Tasks); index++ {
 		if clist.Tasks[index].ID == "" {
@@ -63,5 +63,5 @@ func (m *ListDAO) Update(clist CList) error {
 	}
 
 	err := db.C(COLLECTION).UpdateId(clist.ID, &clist)
-	return err
+	return clist, err
 }

@@ -58,11 +58,11 @@ func createCList(c echo.Context) error {
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	listId, err := dao.Insert(*u)
+	clist, err := dao.Insert(*u)
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusCreated, listId)
+	return c.JSON(http.StatusCreated, clist)
 }
 
 func deleteCList(c echo.Context) error {
@@ -101,10 +101,11 @@ func updateCList(c echo.Context) error {
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	if err := dao.Update(*u); err != nil {
+	list, err := dao.Update(*u)
+	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusCreated, u)
+	return c.JSON(http.StatusCreated, list)
 }
 
 func notImplemented(c echo.Context) error {
