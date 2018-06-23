@@ -4,6 +4,7 @@ import (
 	. "checklist/configs"
 	. "checklist/dao"
 	. "checklist/models"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -42,6 +43,7 @@ func main() {
 	e.POST("/getCListById", getCListById)
 	e.POST("/deleteCList", deleteCList)
 	e.POST("/updateCList", updateCList)
+	e.POST("/search", searchByText)
 
 	// Tasks API
 	e.POST("/getTasksByCList", notImplemented)
@@ -110,4 +112,17 @@ func updateCList(c echo.Context) error {
 
 func notImplemented(c echo.Context) error {
 	return c.String(http.StatusOK, "Hello, World!")
+}
+
+func searchByText(c echo.Context) error {
+	u := new(SearchText)
+	if err := c.Bind(u); err != nil {
+		return err
+	}
+	fmt.Println(u.Text)
+	lists, err := dao.Search(u.Text)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, lists)
 }

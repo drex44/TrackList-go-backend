@@ -2,6 +2,7 @@ package dao
 
 import (
 	. "checklist/models"
+	"fmt"
 	"log"
 
 	mgo "gopkg.in/mgo.v2"
@@ -64,4 +65,11 @@ func (m *ListDAO) Update(clist CList) (CList, error) {
 
 	err := db.C(COLLECTION).UpdateId(clist.ID, &clist)
 	return clist, err
+}
+
+func (m *ListDAO) Search(text string) ([]CList, error) {
+	fmt.Println(text)
+	var lists []CList
+	err := db.C(COLLECTION).Find(bson.M{"$text": bson.M{"$search": text}}).All(&lists)
+	return lists, err
 }
