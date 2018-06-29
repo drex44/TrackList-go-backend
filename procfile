@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 web: go run server.go
+=======
+web: server
+>>>>>>> af47e37d3d9fc8881f17e4e310f73b846e986f8d
