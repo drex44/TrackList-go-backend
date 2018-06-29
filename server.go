@@ -30,7 +30,7 @@ func main() {
 
 	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"https://labstack.com", "http://localhost:3000"},
+		AllowOrigins: []string{"https://tracklist-alpha-react.herokuapp.com", "http://localhost:3000", "https://drex44.github.io"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 	// CORS middleware
