@@ -5,7 +5,9 @@ import (
 	. "checklist/dao"
 	. "checklist/models"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -52,7 +54,20 @@ func main() {
 	e.POST("/removeTask", notImplemented)
 	e.POST("/updateTask", notImplemented)
 
-	e.Logger.Fatal(e.Start(":4000"))
+	addr, err := determineListenAddress()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	e.Logger.Fatal(e.Start(addr))
+}
+
+func determineListenAddress() (string, error) {
+	port := os.Getenv("PORT")
+	if port == "" {
+		return "", fmt.Errorf("$PORT not set")
+	}
+	return ":" + port, nil
 }
 
 func createCList(c echo.Context) error {
