@@ -9,18 +9,23 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type ListDAO struct {
+//TrackListDAO ...
+// dao object
+type TrackListDAO struct {
 	Server   string
 	Database string
 }
 
 var db *mgo.Database
 
+// lists of collections
 const (
-	COLLECTION = "lists"
+	ListsCollection     = "lists"
+	UsersCollection     = "users"
+	UserListsCollection = "UserLists"
 )
 
-func (m *ListDAO) Connect() {
+func (m *TrackListDAO) Connect() {
 	session, err := mgo.Dial(m.Server)
 	if err != nil {
 		log.Fatal(err)
@@ -28,34 +33,72 @@ func (m *ListDAO) Connect() {
 	db = session.DB(m.Database)
 }
 
-func (m *ListDAO) FindAll() ([]CList, error) {
+// lists collection
+
+//FindAllLists ...
+func (m *TrackListDAO) FindAllLists() ([]CList, error) {
 	var clists []CList
-	err := db.C(COLLECTION).Find(bson.M{}).All(&clists)
+	err := db.C(ListsCollection).Find(bson.M{}).All(&clists)
 	return clists, err
 }
 
-func (m *ListDAO) FindById(clist CList) (CList, error) {
+//FindAllPrivateLists ...
+func (m *TrackListDAO) FindAllPrivateLists(userID string) ([]CList, error) {
+	var clists []CList
+	userLists, err := FindUserLists(userID)
+	if err != nil {
+		fmt.Println(err)
+		return clists, err
+	}
+
+	err = db.C(ListsCollection).Find(bson.M{"_id": bson.M{"$in": userLists.Tasks}}).All(&clists)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return clists, err
+}
+
+//FindListByID ...
+func (m *TrackListDAO) FindListByID(clist CList) (CList, error) {
 	var resCList CList
-	err := db.C(COLLECTION).FindId(clist.ID).One(&resCList)
+	err := db.C(ListsCollection).FindId(clist.ID).One(&resCList)
 	return resCList, err
 }
 
-func (m *ListDAO) Insert(clist CList) (CList, error) {
-	var listId = bson.NewObjectId()
-	clist.ID = listId
+//InsertNewList ...
+func (m *TrackListDAO) InsertNewList(clist CList, userID string) (CList, error) {
+	listID := bson.NewObjectId()
+	clist.ID = listID
 	for index := 0; index < len(clist.Tasks); index++ {
 		clist.Tasks[index].ID = bson.NewObjectId()
 	}
-	err := db.C(COLLECTION).Insert(&clist)
-	return clist, err
+	errList := db.C(ListsCollection).Insert(&clist)
+
+	if errList == nil {
+		userLists, err := FindUserLists(userID)
+		if err != nil {
+			userLists.ID = bson.ObjectIdHex(userID)
+		}
+		userLists.Tasks = append(userLists.Tasks, listID)
+
+		err = db.C(UserListsCollection).Insert(&userLists)
+		if err != nil {
+			fmt.Println(err)
+			return clist, err
+		}
+	}
+
+	return clist, errList
 }
 
-func (m *ListDAO) Delete(clist CList) error {
-	err := db.C(COLLECTION).RemoveId(clist.ID)
+//DeleteList ...
+func (m *TrackListDAO) DeleteList(clist CList) error {
+	err := db.C(ListsCollection).RemoveId(clist.ID)
 	return err
 }
 
-func (m *ListDAO) Update(clist CList) (CList, error) {
+//UpdateList ...
+func (m *TrackListDAO) UpdateList(clist CList) (CList, error) {
 
 	for index := 0; index < len(clist.Tasks); index++ {
 		if clist.Tasks[index].ID == "" {
@@ -63,13 +106,49 @@ func (m *ListDAO) Update(clist CList) (CList, error) {
 		}
 	}
 
-	err := db.C(COLLECTION).UpdateId(clist.ID, &clist)
+	err := db.C(ListsCollection).UpdateId(clist.ID, &clist)
 	return clist, err
 }
 
-func (m *ListDAO) Search(text string) ([]CList, error) {
-	fmt.Println(text)
+//SearchLists ...
+func (m *TrackListDAO) SearchLists(text string) ([]CList, error) {
 	var lists []CList
-	err := db.C(COLLECTION).Find(bson.M{"$text": bson.M{"$search": text}}).All(&lists)
+	err := db.C(ListsCollection).Find(bson.M{"$text": bson.M{"$search": text}}).All(&lists)
 	return lists, err
 }
+
+// lists collection
+
+//users collections
+
+//FindUserByEmail ...
+//find user by email address
+func (m *TrackListDAO) FindUserByEmail(email string) (UserAccount, error) {
+	var profile UserAccount
+	err := db.C(UsersCollection).Find(bson.M{"email": email}).One(&profile)
+	return profile, err
+}
+
+//InsertNewUser ...
+func (m *TrackListDAO) InsertNewUser(profile UserAccount) (UserAccount, error) {
+	var id = bson.NewObjectId()
+	profile.ID = id
+	err := db.C(UsersCollection).Insert(&profile)
+	return profile, err
+}
+
+//users collections
+
+// lists of user collection
+
+//FindUserLists ...
+func FindUserLists(ID string) (UserLists, error) {
+	var res UserLists
+	err := db.C(UserListsCollection).FindId(bson.ObjectIdHex(ID)).One(&res)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return res, err
+}
+
+// lists of user collection

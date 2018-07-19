@@ -7,14 +7,13 @@ import (
 )
 
 // Represents database server and credentials
-type MongoConfig struct {
-	Server   string
-	Database string
+type JWTConfig struct {
+	EncryptionKey string
 }
 
 // Read and parse the configuration file
-func (c *MongoConfig) Read() {
-	if _, err := toml.DecodeFile("configs/mongo.toml", &c); err != nil {
+func (c *JWTConfig) Read() {
+	if _, err := toml.DecodeFile("configs/jwt.toml", &c); err != nil {
 		log.Fatal(err)
 	}
 }
