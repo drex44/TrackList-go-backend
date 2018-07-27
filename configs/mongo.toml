@@ -1,2 +1,2 @@
-server="mongodb://heroku:heroku123@ds121331.mlab.com:21331/clist_db"
+server="mongodb://localhost:27017/clist_db"
 database="clist_db"
