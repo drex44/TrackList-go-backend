@@ -5,7 +5,6 @@ import (
 	controllers "checklist/controllers"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/labstack/echo"
@@ -24,24 +23,28 @@ func main() {
 
 	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"https://tracklist-alpha.herokuapp.com", "http://localhost:3000"},
+		AllowOrigins: []string{"http://tracklist-alpha.surge.sh", "http://localhost:3000"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
 	// CORS middleware
-
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
 
 	//user accounts
 	e.POST("/authenticate", controllers.AuthenticateUser)
 
 	// CList API
 	e.POST("/getAllPublicList", controllers.GetAllPublicList)
-	e.POST("/getListById", controllers.GetListById)
-	e.POST("/deleteList", controllers.DeleteList)
-	e.POST("/updateList", controllers.UpdateList)
 	e.POST("/search", controllers.SearchListsByText)
+
+	// Restricted
+	jwtMiddleWare := middleware.JWT([]byte(jwtConfig.EncryptionKey))
+	r := e.Group("/user")
+	r.Use(jwtMiddleWare)
+	r.POST("/createList", controllers.CreateList)
+	r.POST("/getListById", controllers.GetListById)
+	r.POST("/deleteList", controllers.DeleteList)
+	r.POST("/updateList", controllers.UpdateList)
+	r.POST("/getAllList", controllers.GetAllPrivateLists)
+	r.POST("/addPublicListToUserList", controllers.AddPublicListToUserList)
 
 	// Tasks API
 	e.POST("/getTasksByList", controllers.NotImplemented)
@@ -49,15 +52,6 @@ func main() {
 	e.POST("/addTask", controllers.NotImplemented)
 	e.POST("/removeTask", controllers.NotImplemented)
 	e.POST("/updateTask", controllers.NotImplemented)
-
-	// Restricted
-	r := e.Group("/createCList")
-	r.Use(middleware.JWT([]byte(jwtConfig.EncryptionKey)))
-	r.POST("", controllers.CreateList)
-
-	r = e.Group("/getAllPrivateLists")
-	r.Use(middleware.JWT([]byte(jwtConfig.EncryptionKey)))
-	r.POST("", controllers.GetAllPrivateLists)
 
 	addr, err := determineListenAddress()
 	if err != nil {

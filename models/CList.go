@@ -12,7 +12,9 @@ type CList struct {
 	Contributors []string      `bson:"contributors" json:"contributors"`
 	Location     string        `bson:"location" json:"location"`
 	Tasks        []Task        `bson:"tasks" json:"tasks"`
-	Public       bool          `bson:"public" json:"public"`
+	PublicList   bool          `bson:"publiclist" json:"publiclist"`
+	Version      int           `bson:"version" json:"version"`
+	ParentListID string        `bson:"parentlistid" json:"parentlistid"`
 }
 type Task struct {
 	ID          bson.ObjectId `bson:"_id" json:"id"`

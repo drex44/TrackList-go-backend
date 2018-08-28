@@ -9,17 +9,18 @@ type UserAccount struct {
 	Name       string        `bson:"name" json:"name"`
 	Email      string        `bson:"email" json:"email"`
 	Picture    string        `bson:"picture" json:"picture"`
+	Lists      []CList       `bson:"lists" json:"lists"`
 }
 
 type GoogleAccountResponse struct {
 	Name          string `bson:"name" json:"name"`
-	GivenName     string `bson:"givenName" json:"given_name"`
-	FamilyName    string `bson:"familyName" json:"family_name"`
+	GivenName     string `bson:"givenname" json:"givenname"`
+	FamilyName    string `bson:"familyname" json:"familyname"`
 	Email         string `bson:"email" json:"email"`
-	EmailVerified string `bson:"emailVerified" json:"email_verified"`
+	EmailVerified string `bson:"emailverified" json:"emailverified"`
 	Picture       string `bson:"picture" json:"picture"`
 	Locale        string `bson:"locale" json:"locale"`
-	AtHash        string `bson:"atHash" json:"at_hash"`
+	AtHash        string `bson:"athash" json:"athash"`
 	Exp           string `bson:"exp" json:"exp"`
 	Iss           string `bson:"iss" json:"iss"`
 	Jti           string `bson:"jti" json:"jti"`

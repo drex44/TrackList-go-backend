@@ -1,1 +1,1 @@
-db.lists.ensureIndex({title:"text", description:"text",category:"text"})
+db.PublicList.ensureIndex({title:"text", description:"text",category:"text"})
