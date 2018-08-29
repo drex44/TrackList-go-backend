@@ -23,7 +23,7 @@ func main() {
 
 	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://tracklist-alpha.surge.sh", "http://localhost:3000"},
+		AllowOrigins: []string{"https://tracklist-alpha.surge.sh", "http://tracklist-alpha.surge.sh", "http://localhost:3000"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
 	// CORS middleware
